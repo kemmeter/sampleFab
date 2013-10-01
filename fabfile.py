@@ -19,12 +19,15 @@ def setup():
     print(yellow('\nBasic server setup\n\n'))
     run('apt-get -y install apache2 php5 git curl ruby-compass')
     run('echo "ServerName localhost" >> /etc/apache2/apache2.conf')
+
     # clone my dotfiles
     run('rm -rf ~/.dotfiles')
     run('cd ~ && git clone https://github.com/kemmeter/dotfiles .dotfiles')
+
     # get the git prompt bash extention
     run('cd ~ && curl https://raw.github.com/git/git/master/contrib/completion/git-prompt.sh -o ~/.git-prompt.sh')
-    # symlink
+
+    # remove original dotfiles and add symlinks
     run('rm -f ~/.bashrc && ln -s ~/.dotfiles/bashrc ~/.bashrc')
     run('rm -f ~/.vimrc && ln -s ~/.dotfiles/vimrc ~/.vimrc')
 
