@@ -4,6 +4,8 @@ from fabric.colors import *
 
 env.hosts = ['192.168.66.6']
 env.user = 'root'
+#super secure ;D
+env.password = '1234'
 
 # custom env
 env.app_root = '/var/www/sampleapp'
@@ -17,6 +19,7 @@ env.git_repository = 'https://github.com/kemmeter/sampleApp.git'
 def setup():
     """Basic Server Setup"""
     print(yellow('\nBasic server setup\n\n'))
+    run('apt-get update')
     run('apt-get -y install apache2 php5 git curl ruby-compass')
     run('echo "ServerName localhost" >> /etc/apache2/apache2.conf')
 
@@ -46,15 +49,16 @@ def deploy():
         print(yellow('\ncloning %s...\n\n' % env.git_repository))
         run('git clone %s %s' % (env.git_repository, env.app_root))
 
-    upload_media()
+    #upload_media()
     get_latest_jquery()
-    compile_compass()
+    #compile_compass()
     set_ownership(env.app_root)
     set_vhosts()
 
     print(green('\nDeployment complete :)\n\n'))
 
 
+@task
 def upload_media():
     """Upload the media files"""
     print(yellow('\nuploading mediafiles...\n\n'))
@@ -70,6 +74,7 @@ def get_latest_jquery():
         '/var/www/sampleapp/web/javascript')
 
 
+@task
 def compile_compass():
     """Compass compile"""
     print(yellow('\ncompiling sass files with compass...\n\n'))
@@ -94,5 +99,7 @@ def set_vhosts():
     vhost_file = '/etc/apache2/sites-available/sampleapp'
 
     run('cp %s/vhosts/sampleapp %s' % (env.app_root, vhost_file))
+    print(yellow('\nenabling vhost configuration...\n\n'))
     run('a2ensite sampleapp')
+    print(yellow('\nrestarting apache...\n\n'))
     run('apache2ctl restart')
